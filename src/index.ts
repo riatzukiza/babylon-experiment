@@ -1,4 +1,4 @@
-import 'babylonjs-loaders';
+import '@babylonjs/loaders';
 import { Game } from './game';
 import CANNON = require('cannon');
 
