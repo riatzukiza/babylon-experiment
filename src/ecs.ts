@@ -7,6 +7,9 @@ export class Entity {
         this._entities.set(entity.uuid,entity);
         return entity;
     }
+    static find(uuid:string){
+        return this._entities.get(uuid);
+    }
     static destroy(uuid) {
     }
 
@@ -19,7 +22,11 @@ export class Entity {
 export class Component {
     public entity:Entity;
     public system: ComponentSystem;
-    constructor(entity:Entity,system:ComponentSystem,...data) {
+    constructor(
+        entity:Entity,
+        system:ComponentSystem,
+        config
+    ) {
         this.entity = entity;
         this.system = system;
     }
@@ -31,14 +38,14 @@ export class ComponentSystem {
     constructor() {
         this.components = new Map();
     }
-    register(entity:Entity,...data) {
+    register(entity:Entity,config) {
         if(this.components.has(entity)) throw new Error("System already has this entity");
-        this.components.set(entity,new this.Component(entity,this,...data))
+        this.components.set(entity,new this.Component(entity,this,config))
     }
     get(entity:Entity) {
         return this.components.get(entity);
     }
-    update() {
+    update(scene) {
         throw new Error("Update not implemented on component system subtype");
     }
 }
@@ -50,17 +57,17 @@ export class EntityGroup {
         this._members = new Set();
         this._systems = systems;
     }
-    set(entity:Entity,...data) {
+    set(entity:Entity,config) {
         if(this._members.has(entity)) throw new Error("Entity already in group");
 
         this._members.add(entity);
 
         for(let s of this._systems) {
-            s.register(entity,...data);
+            s.register(entity,config);
         }
     }
-    spawn(...data) {
-        this.set(Entity.create(),...data);
+    spawn(config) {
+        this.set(Entity.create(),config);
     }
     get(entity:Entity) {
         if(this._members.has(entity)) {

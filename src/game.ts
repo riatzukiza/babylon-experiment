@@ -44,13 +44,13 @@ export class Game {
 
         scene.enablePhysics(new BABYLON.Vector3(0, 0, 0));
 
+        let size = (Math.random()) * 5;
         for(let i = 0;i < 500;i++) {
             ParticleBall.spawn(
-                (Math.random() - 0.5) * 200,
-                (Math.random() - 0.5) * 200,
-                (Math.random() - 0.5) * 200,
-                (Math.random()) * 2,
-                (Math.random()) * 2000,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                size,size,
                 //(Math.random() - 0.5) * 0.9,
                 scene
             )
@@ -105,10 +105,11 @@ export class Game {
         this._scene = this.createScene();;
         let sceneToRender = this._scene
 
-        this._engine.runRenderLoop(function() {
+        this._engine.runRenderLoop(() => {
             if (sceneToRender) {
                 sceneToRender.render();
-                Systems.gravity.update();
+                Systems.gravity.update(sceneToRender);
+                console.log("fps",this._engine.getFps())
             }
         });
 
